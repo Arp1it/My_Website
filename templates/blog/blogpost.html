@@ -1,0 +1,170 @@
+{% extends 'maiinn/mains.html' %}
+
+{% block css %}
+<style>
+</style>
+{% endblock %}
+
+{% block body %}
+
+{% load static %}
+{% load humanize %}
+{% load extraa %}
+
+<main class="pt-8 pb-16 lg:pt-16 lg:pb-24 bg-white dark:bg-gray-900">
+    <div class="flex justify-between px-4 mx-auto max-w-screen-xl ">
+        <article
+            class="mx-auto w-full max-w-2xl format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
+            <header class="mb-4 lg:mb-6 not-format">
+                <address class="flex items-center mb-6 not-italic">
+                    <div class="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white">
+                        <img class="mr-4 w-16 h-16 rounded-full"
+                            src="https://flowbite.com/docs/images/people/profile-picture-2.jpg" alt="Jese Leos">
+                        <div>
+                            <a href="#" rel="author"
+                                class="text-xl font-bold text-gray-900 dark:text-white">{{post.author}}</a>
+                            <p class="text-base font-light text-gray-500 dark:text-gray-400">{{post.aboutauthor}}</p>
+                            <p class="text-base font-light text-gray-500 dark:text-gray-400"><time pubdate
+                                    datetime="2022-02-08" title="February 8th, 2022">{{post.time}}</time></p>
+                        </div>
+                    </div>
+                </address>
+                <h1
+                    class="mb-4 text-3xl font-extrabold leading-tight text-gray-900 lg:mb-6 lg:text-4xl dark:text-white">
+                    {{post.mainhead}}</h1>
+            </header>
+            <!-- Adding a youtube video -->
+            <div>
+                <iframe width="600" height="315" src="https://www.youtube.com/embed/YuAya0hRjwU" frameborder="0"
+                    allowfullscreen></iframe>
+            </div>
+            <p class="lead mb-5 mt-2">{{post.content}}</p>
+            <figure><img src="https://flowbite.s3.amazonaws.com/typography-plugin/typography-image-1.png" alt="">
+                <figcaption>Digital art by Anonymous</figcaption>
+            </figure>
+        </article>
+    </div>
+</main>
+
+
+<section class="text-gray-600 body-font relative">
+    <div class="lg:w-1/2 md:w-2/3 mx-auto">
+        <div class="flex flex-wrap -m-2">
+            <div class="p-2 w-full">
+
+                {% if user.is_authenticated %}
+
+                <form action="/blog/blogcomment" method="post">{% csrf_token %}
+                    <div class="relative">
+                        <h1>Comment</h1>
+                        <textarea id="comment" name="comment"
+                            class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"></textarea>
+                        <input type="hidden" name="PostSno" value="{{post.sno}}">
+                        <input type="hidden" name="parenttssno" value="">
+                    </div>
+                    <div class="p-2 w-full">
+                        <button
+                            class="flex mx-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg"
+                            type="submit">Submit</button>
+                    </div>
+                </form>
+                    
+                {% else %}
+                    Please go signup for commenting
+                {% endif %}
+                <section class="text-gray-600 body-font relative">
+                    {% for comment in comments %}
+                    <div class="grid grid-cols-6 my-3">
+                        {% if img.images %}
+                        <div class="col-start-1 col-span-1 p-5">
+                            <img class="rounded-full w-10 h-10" src="media/{{img.images}}"
+                                alt="image description">
+                        </div>
+                            
+                        {% else %}
+                        <div class="col-start-1 col-span-1 p-5">
+                            <img class="rounded-full w-10 h-10" src="{% static 'default.webp' %}"
+                                alt="image description">
+                        </div>
+                            
+                        {% endif %}
+
+                        <div class="col-start-2 col-end-11"><b>{{comment.user}}</b> <span
+                                class="text-xs inline-block py-1 px-2.5 leading-none text-center whitespace-nowrap align-baseline font-bold bg-gray-200 text-gray-700 rounded">{{comment.timestamp|naturaltime}}</span>
+                            <div class="my-3">{{comment.comment}}</div>
+
+                            <div class="reply mx-0">
+
+                                <button class="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out" type="button" data-bs-toggle="collapse" data-bs-target="#r{{comment.sno}}" aria-expanded="false" aria-controls="r{{comment.sno}}">
+                                    Reply
+                                  </button>
+
+                                <a class="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
+                                    data-bs-toggle="seecollapse" href="#seer{{comment.sno}}" role="button"
+                                    aria-expanded="false" aria-controls="{{comment.sno}}">
+                                    see comments
+                                </a>
+
+                                {% if user.is_authenticated %}
+
+                                <form action="/blog/blogcomment" method="post">{% csrf_token %}
+                                    <div class="collapse" id="r{{comment.sno}}">
+                                        <div class="relative">
+                                            <h1>Reply</h1>
+                                            <textarea id="comment" name="comment"
+                                                class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"></textarea>
+                                            <input type="hidden" name="parenttssno" value="{{comment.sno}}">
+                                            <input type="hidden" name="PostSno" value="{{post.sno}}">
+                                        </div>
+                                        <div class="p-2 w-full">
+                                            <button
+                                                class="flex mx-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg"
+                                                type="submit">Submit</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                    
+                                {% else %}
+                                Please go sign up fro replying
+                                    
+                                {% endif %}
+
+                                {% for reply in replydict|getvalu:comment.sno %}
+                                <div class="seecollapse replies my-2" id="seer{{comment.sno}}" style="max-width: 500px">
+
+
+                                    <div class="grid grid-cols-6 my-3">
+                                        <div class="col-start-1 col-span-1 p-5">
+                                            <img class="rounded-full w-10 h-10" src="{% static 'default.webp' %}"
+                                                alt="image description">
+                                        </div>
+
+                                        <div class="col-start-2 col-end-11"><b>{{reply.user}}</b> <span
+                                                class="text-xs inline-block py-1 px-2.5 leading-none text-center whitespace-nowrap align-baseline font-bold bg-gray-200 text-gray-700 rounded">{{reply.timestamp|naturaltime}}</span>
+                                            <div class="my-3">{{reply.comment}}</div>
+                                        </div>
+
+
+
+                                    </div>
+                                </div>
+                                {% endfor %}
+
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </section>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Adding a mp4 video from your system -->
+<!-- <video class="w-full" controls>
+    <source src="" type="video/mp4">
+    Your browser does not support the video tag.
+</video> -->
+
+{% endblock %}

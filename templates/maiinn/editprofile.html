@@ -1,0 +1,16 @@
+{% extends 'maiinn/mains.html' %}
+
+{% block body %}
+    
+
+<form method = "post" action="/change">
+    {% csrf_token %}
+    
+    <input type="text" name="name", value="{{name}}">
+    <input type="password", name="passs1" placeholder="enter your new password"><!--{{name.password}}-->
+
+    <button type="submit">Upload</button>
+</form>
+
+
+{% endblock %}
