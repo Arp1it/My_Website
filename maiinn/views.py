@@ -39,6 +39,15 @@ def signin(request):
             messages.error(request, "Please enter username greater than 3 or less than 15 and password is greater than 4")
             return redirect("/")
 
+        user_email_list = list(User.objects.values_list("email", flat=True))
+        if email in user_email_list:
+            messages.error(request, "Email address already exist")
+            return redirect("/")
+
+        user_list = list(User.objects.values_list("username", flat=True))
+        if username in user_list:
+            messages.error(request, "Username already taken")
+            return redirect("/")
 
         person = User.objects.create_user(username, email, passs)
         person.save()
@@ -95,6 +104,11 @@ def Editing(request):
         if request.method == "POST":
             name1 = request.POST.get('name')
             passs = request.POST['passs1']
+            passs2 = request.POST['passs2']
+
+            if passs != passs2:
+                messages.error(request, "please enter confirm password correctly")
+                return redirect("/change")
 
             u = User.objects.get(username__exact=name)
             u.username = name1
@@ -116,3 +130,17 @@ def Editing(request):
 
     else:
         return HttpResponse("404-Not Found")
+
+def forgot(request):
+    if request.method == 'POST':
+        emmail = request.POST['email']
+
+        email_list = list(User.objects.values_list("email", flat=True))
+        user_list = list(User.objects.values_list("username", flat=True))
+        print(email_list, user_list)
+
+        if emmail in email_list:
+            for i in email_list:
+                if i == emmail:
+                    print(i)
+    return render(request, 'maiinn/forgoot.html')
