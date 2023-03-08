@@ -13,5 +13,6 @@ urlpatterns = [
     path("handlelogout", views.handlelogout, name="handlelogout"),
     path("Profile", views.Profile, name="Profile"),
     path("change", views.Editing, name="change"),
-    path("forgotpasss", views.forgot, name="forgot"),
+    path("forgotpasss", views.forgotpasss, name="forgotpasss"),
+    path("forgot", views.forgot, name="forgot"),
 ]

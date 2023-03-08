@@ -5,6 +5,10 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, logout
 from django.contrib.auth import login as auth_login
 from . forms import *
+# from django.core.mail import send_mail
+import smtplib
+import random
+
 
 # Create your views here.
 def index(request):
@@ -131,7 +135,7 @@ def Editing(request):
     else:
         return HttpResponse("404-Not Found")
 
-def forgot(request):
+def forgotpasss(request):
     if request.method == 'POST':
         emmail = request.POST['email']
 
@@ -139,8 +143,51 @@ def forgot(request):
         user_list = list(User.objects.values_list("username", flat=True))
         print(email_list, user_list)
 
+        codee = random.randint(11111, 99999)
+
         if emmail in email_list:
             for i in email_list:
                 if i == emmail:
-                    print(i)
-    return render(request, 'maiinn/forgoot.html')
+                    def send_mail(email, password, message):
+                        server = smtplib.SMTP("smtp.gmail.com", 587)
+                        server.starttls()
+                        server.login(email, password)
+                        server.sendmail(email, i, message)
+
+                    email = "your_email_id"
+                    password = "admin_password or admin_team_password"
+                    message = f"hello arpit your code - {codee}"
+                    send_mail(email, password, message)
+
+                    messages.success(request, f"code has been send on {i}")
+
+            return redirect("/forgot")
+
+        else:
+            messages.error(request, "User not exist")
+            return redirect("/forgotpasss")
+    return render(request, 'maiinn/forgootpasss.html')
+
+
+def forgot(request):
+    if request.method == "POST":
+        name = request.POST['name']
+        password = request.POST['password']
+        confirmpass = request.POST['confirm-password']
+
+        user_names = list(User.objects.values_list("username", flat=True))
+        if name not in user_names:
+            messages.error(request, "User not exist")
+            return redirect("/forgot")
+
+        if password != confirmpass:
+            messages.error(request, "password and confirm password not matched")
+            return redirect("/forgot")
+
+        usrr = User.objects.get(username__exact=name)
+        usrr.set_password(password)
+        usrr.save()
+
+        messages.success(request, "Successfully change password")
+        return redirect("/login")
+    return render(request, "maiinn/forgot.html")
