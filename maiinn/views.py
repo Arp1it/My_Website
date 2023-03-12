@@ -154,15 +154,15 @@ def forgotpasss(request):
                         server.login(email, password)
                         server.sendmail(email, i, message)
 
-                    email = "your_email_id"
-                    password = "admin_password or admin_team_password"
+                    email = "your_gmail"
+                    password = "your_password"
                     message = f"hello arpit your code - {codee}"
                     send_mail(email, password, message)
 
                     messages.success(request, f"code has been send on {i}")
 
-            return redirect("/forgot")
-
+            # return redirect("/verified")
+            return render(request, "maiinn/verification.html", {'codee':codee})
         else:
             messages.error(request, "User not exist")
             return redirect("/forgotpasss")
@@ -191,3 +191,19 @@ def forgot(request):
         messages.success(request, "Successfully change password")
         return redirect("/login")
     return render(request, "maiinn/forgot.html")
+
+
+def verified(request):
+    if request.method == "POST":
+        user_code = request.POST['code']
+        user_codee = request.POST['codee']
+        print(user_codee)
+
+        if user_code == user_codee:
+            return redirect("/forgot")
+
+        else:
+            messages.error(request, "Code is wrong")
+            return redirect("/forgotpass")
+
+    return render(request, "maiinn/verification.html")

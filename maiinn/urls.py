@@ -15,4 +15,5 @@ urlpatterns = [
     path("change", views.Editing, name="change"),
     path("forgotpasss", views.forgotpasss, name="forgotpasss"),
     path("forgot", views.forgot, name="forgot"),
+    path("verified", views.verified, name="verified"),
 ]
