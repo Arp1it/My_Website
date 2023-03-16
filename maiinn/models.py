@@ -13,6 +13,9 @@ class Contact(models.Model):
     def __str__(self):
         return self.name
 
-# class Profile(models.Model):
-#     user = models.OneToOneField(User, on_delete=models.CASCADE, RELATED_NAME = 'Profile')
-#     image = models.ImageField(upload_to="media/mainn/images", default="static/default.webp")
+class userProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name = 'Profile')
+    image = models.ImageField(upload_to="mainn/images/", default="mainn/images/default.webp")
+
+    def __str__(self):
+        return str(self.user)

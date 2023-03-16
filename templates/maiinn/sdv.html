@@ -1,0 +1,11 @@
+{% extends 'maiinn/mains.html' %}
+
+{% block body %}
+
+<form method = "post" action="/sdv" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Upload">
+</form>
+
+{% endblock %}

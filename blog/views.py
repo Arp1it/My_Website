@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from . models import BlogPost, Blogcomment
 from django.contrib import messages
+from maiinn.models import userProfile
 
 # Create your views here.
 def bloghome(request):

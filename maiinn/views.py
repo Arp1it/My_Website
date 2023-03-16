@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.contrib import messages
-from . models import Contact
+from . models import Contact, userProfile
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, logout
 from django.contrib.auth import login as auth_login
@@ -8,6 +8,8 @@ from . forms import *
 # from django.core.mail import send_mail
 import smtplib
 import random
+from .forms import ImageForm
+# from email.mime.multipart import MIMEMultipart
 
 
 # Create your views here.
@@ -19,13 +21,25 @@ def about(request):
 
 def contact(request):
     if request.method == "POST":
+        # msg = MIMEMultipart()
         name = request.POST['name']
-        email = request.POST['email']
+        emaill = request.POST['email']
         mesg = request.POST['message']
 
-        con = Contact(name=name, email=email, message=mesg)
+        # def send_mail(email, message):
+        #     msg['From'] = emaill
+        #     msg['To'] = email
+        #     msg['Subject'] = 'contact from ... website'
+        #     server = smtplib.SMTP('127.0.0.1:8000')
+        #     server.sendmail(emaill,email,message.as_string())
+
+        # email = "me@gmail.com"
+
+        # send_mail(email, msg)
+
+        con = Contact(name=name, email=emaill, message=mesg)
         con.save()
-        messages.success(request, "Successfully Send")
+        messages.success(request, f"Your message has been send successfully")
         
     return render(request, "maiinn/contact.html")
 
@@ -56,11 +70,16 @@ def signin(request):
         person = User.objects.create_user(username, email, passs)
         person.save()
 
+
+
         identy = authenticate(username=username, password=passs)
 
         if identy is not None:
             auth_login(request, identy)
             messages.success(request, "Successfully Sign in.")
+            profus = userProfile(user=request.user)
+            profus.save()
+            # print("Not Found")
 
             return redirect("/")
     return render(request, "maiinn/signin.html")
@@ -79,7 +98,7 @@ def login(request):
 
         else:
             messages.error(request, "This account is not register please go and signin.")
-            return redirect("/")
+            return redirect("/login")
 
     return render(request, "maiinn/login.html")
 
@@ -97,6 +116,11 @@ def handlelogout(request):
 def Profile(request):
     if request.user.is_authenticated:
         name = request.user
+        # imgprof = userProfile.objects.filter(user=name)
+        # a = userProfile(user=request.user).image
+        # print(userProfile(user=request.user))
+        # print(userProfile(user=request.user).image.url)
+        # return render(request, "maiinn/userprofile.html", {'name':name, 'profimg':a})
         return render(request, "maiinn/userprofile.html", {'name':name})
 
     else:
@@ -104,15 +128,31 @@ def Profile(request):
 
 def Editing(request):
     if request.user.is_authenticated:
+        user = request.user.Profile
+        form = ImageForm(instance=user)
         name = request.user
+
         if request.method == "POST":
             name1 = request.POST.get('name')
             passs = request.POST['passs1']
             passs2 = request.POST['passs2']
 
+
             if passs != passs2:
                 messages.error(request, "please enter confirm password correctly")
                 return redirect("/change")
+
+            if str(name) != name1:
+                usersname = list(User.objects.values_list("username", flat=True))
+                if name1 in usersname:
+                    messages.error(request, "Username already be taken")
+                    return redirect("/change")
+
+            # if profileimg:
+            form = ImageForm(request.POST, request.FILES, instance=user)
+            # if form.is_valid():
+            form.save()
+            # return render(request, "maiinn/sdv.html", {'form':form})
 
             u = User.objects.get(username__exact=name)
             u.username = name1
@@ -125,12 +165,13 @@ def Editing(request):
                 auth_login(request, userchangeidenty)
                 messages.success(request, "changed Successfully")
 
+
             else:
                 messages.error(request, "username or password already have been taken")
 
             return redirect("/Profile")
 
-        return render(request, "maiinn/editprofile.html", {'name':name})
+        return render(request, "maiinn/editprofile.html", {'name':name, 'form':form})
 
     else:
         return HttpResponse("404-Not Found")
@@ -154,8 +195,8 @@ def forgotpasss(request):
                         server.login(email, password)
                         server.sendmail(email, i, message)
 
-                    email = "your_gmail"
-                    password = "your_password"
+                    email = "me@gmail.com"
+                    password = "password"
                     message = f"hello arpit your code - {codee}"
                     send_mail(email, password, message)
 
@@ -207,3 +248,13 @@ def verified(request):
             return redirect("/forgotpass")
 
     return render(request, "maiinn/verification.html")
+
+# For testing new things only
+# def sdv(request):
+#     user = request.user.Profile
+#     if request.method == "POST":
+#         form = ImageForm(request.POST, request.FILES, instance=user)
+#         # if form.is_valid():
+#         form.save()
+#     form = ImageForm(instance=user)
+#     return render(request, "maiinn/sdv.html", {'form':form})

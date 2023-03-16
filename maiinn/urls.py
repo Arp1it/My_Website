@@ -16,4 +16,5 @@ urlpatterns = [
     path("forgotpasss", views.forgotpasss, name="forgotpasss"),
     path("forgot", views.forgot, name="forgot"),
     path("verified", views.verified, name="verified"),
+    # path("sdv", views.sdv, name="sdv"),
 ]
