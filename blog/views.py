@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from . models import BlogPost, Blogcomment
 from django.contrib import messages
-from maiinn.models import userProfile
+# from maiinn.models import userProfile
+# from maiinn.forms import ImageForm
 
 # Create your views here.
 def bloghome(request):
@@ -13,6 +14,7 @@ def bloghome(request):
 
 def blogpost(request, slug):
     blposts = BlogPost.objects.filter(slugg=slug).first()
+
 
 
     comments = Blogcomment.objects.filter(post=blposts, parent=None)
@@ -27,7 +29,7 @@ def blogpost(request, slug):
         else:
             repldit[reply.parent.sno].append(reply)
 
-    contextt = {"post":blposts, "comments":comments, "replydict":repldit, "image":img}
+    contextt = {"post":blposts, "comments":comments, "replydict":repldit}
     return render(request, "blog/blogpost.html", contextt)
 
 # API
