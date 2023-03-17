@@ -54,7 +54,7 @@
 
                 {% if user.is_authenticated %}
 
-                <form action="/blog/blogcomment#f{{request.user.comments}}" method="post">{% csrf_token %}
+                <form action="/blog/blogcomment#f{{com.comment}}{{com.timestamp}}" method="post">{% csrf_token %}
                     <div class="relative">
                         <h1>Comment</h1>
                         <textarea id="comment" name="comment"
@@ -85,7 +85,7 @@
 
                         <div class="col-start-2 col-end-11" id="f{{comment.comment}}"><b>{{comment.user}}</b> <span
                                 class="text-xs inline-block py-1 px-2.5 leading-none text-center whitespace-nowrap align-baseline font-bold bg-gray-200 text-gray-700 rounded">{{comment.timestamp|naturaltime}}</span>
-                            <div class="my-3">{{comment.comment}}</div>
+                            <div class="my-3" id="f{{comment.comment}}{{comment.timestamp}}">{{comment.comment}}</div>
 
                             <div class="reply mx-0">
 
@@ -101,7 +101,7 @@
 
                                 {% if user.is_authenticated %}
 
-                                <form action="/blog/blogcomment#r{{comment.sno}}" method="post">{% csrf_token %}
+                                <form action="/blog/blogcomment#r{{com.comment}}{{com.timestamp}}" method="post">{% csrf_token %}
                                     <div class="collapse" id="r{{comment.sno}}">
                                         <div class="relative">
                                             <h1>Reply</h1>
@@ -137,7 +137,7 @@
 
                                         <div class="col-start-2 col-end-11"><b>{{reply.user}}</b> <span
                                                 class="text-xs inline-block py-1 px-2.5 leading-none text-center whitespace-nowrap align-baseline font-bold bg-gray-200 text-gray-700 rounded">{{reply.timestamp|naturaltime}}</span>
-                                            <div class="my-3">{{reply.comment}}</div>
+                                            <div class="my-3" id="r{{reply.comment}}{{reply.timestamp}}">{{reply.comment}}</div>
                                         </div>
 
 

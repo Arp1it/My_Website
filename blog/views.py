@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse
 from . models import BlogPost, Blogcomment
 from django.contrib import messages
 # from maiinn.models import userProfile
@@ -19,6 +19,9 @@ def blogpost(request, slug):
 
     comments = Blogcomment.objects.filter(post=blposts, parent=None)
 
+    com= Blogcomment.objects.all().last()
+    # print(com)
+
     replies = Blogcomment.objects.filter(post=blposts).exclude(parent=None)
 
     repldit = {}
@@ -29,7 +32,7 @@ def blogpost(request, slug):
         else:
             repldit[reply.parent.sno].append(reply)
 
-    contextt = {"post":blposts, "comments":comments, "replydict":repldit}
+    contextt = {"post":blposts, "comments":comments, "replydict":repldit, "com":com}
     return render(request, "blog/blogpost.html", contextt)
 
 # API
@@ -53,3 +56,28 @@ def blogcomment(request):
             messages.success(request, "Your comment has been posted successfully")
 
     return redirect(f'/blog/{post.slugg}')
+
+def search(request):
+    if request.method == "GET":
+        que = request.GET['query']
+        print(que)
+
+        if len(que) > 30:
+            return render(request, "blog/search.html", {"query":que})
+
+        if len(que) < 4:
+            return render(request, "blog/search.html", {"query":que})
+
+        q = BlogPost.objects.filter(content__icontains=que)
+        q1 = BlogPost.objects.filter(author__icontains=que)
+        q2 = BlogPost.objects.filter(mainhead__icontains=que)
+        q3 = BlogPost.objects.filter(aboutauthor__icontains=que)
+        qqq = q.union(q1, q2, q3)
+        # q = BlogPost()
+        # print(q)
+
+
+        return render(request, "blog/search.html", {"qqq":qqq, "query":que})
+
+        # else:
+        #     return HttpResponse("hey")
