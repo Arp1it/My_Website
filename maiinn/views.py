@@ -43,64 +43,70 @@ def contact(request):
         
     return render(request, "maiinn/contact.html")
 
-def feedback(request):
-    return render(request, "maiinn/feedback.html")
+# def feedback(request):
+#     return render(request, "maiinn/feedback.html")
 
 def signin(request):
-    if request.method == "POST":
-        username = request.POST['uname']
-        email = request.POST['email']
-        passs = request.POST['pass']
-        # passs2 = request.POST['password2']
+    if not request.user.is_authenticated:
+        if request.method == "POST":
+            username = request.POST['uname']
+            email = request.POST['email']
+            passs = request.POST['pass']
+            # passs2 = request.POST['password2']
 
-        if len(username) < 3 or len(username) > 15 or len(passs) < 4:
-            messages.error(request, "Please enter username greater than 3 or less than 15 and password is greater than 4")
-            return redirect("/")
+            if len(username) < 3 or len(username) > 15 or len(passs) < 4:
+                messages.error(request, "Please enter username greater than 3 or less than 15 and password is greater than 4")
+                return redirect("/")
 
-        user_email_list = list(User.objects.values_list("email", flat=True))
-        if email in user_email_list:
-            messages.error(request, "Email address already exist")
-            return redirect("/")
+            user_email_list = list(User.objects.values_list("email", flat=True))
+            if email in user_email_list:
+                messages.error(request, "Email address already exist")
+                return redirect("/")
 
-        user_list = list(User.objects.values_list("username", flat=True))
-        if username in user_list:
-            messages.error(request, "Username already taken")
-            return redirect("/")
+            user_list = list(User.objects.values_list("username", flat=True))
+            if username in user_list:
+                messages.error(request, "Username already taken")
+                return redirect("/")
 
-        person = User.objects.create_user(username, email, passs)
-        person.save()
+            person = User.objects.create_user(username, email, passs)
+            person.save()
 
 
 
-        identy = authenticate(username=username, password=passs)
+            identy = authenticate(username=username, password=passs)
 
-        if identy is not None:
-            auth_login(request, identy)
-            messages.success(request, "Successfully Sign in.")
-            profus = userProfile(user=request.user)
-            profus.save()
-            # print("Not Found")
+            if identy is not None:
+                auth_login(request, identy)
+                messages.success(request, "Successfully Sign in.")
+                profus = userProfile(user=request.user)
+                profus.save()
+                # print("Not Found")
 
-            return redirect("/")
-    return render(request, "maiinn/signin.html")
+                return redirect("/")
+        return render(request, "maiinn/signin.html")
+    
+    return HttpResponse("404 - Not Found")
 
 def login(request):
-    if request.method == "POST":
-        loginname = request.POST['luname']
-        loginpassword = request.POST['lpass']
+    if not request.user.is_authenticated:
+        if request.method == "POST":
+            loginname = request.POST['luname']
+            loginpassword = request.POST['lpass']
 
-        identifyuser = authenticate(username=loginname, password=loginpassword)
+            identifyuser = authenticate(username=loginname, password=loginpassword)
 
-        if identifyuser is not None:
-            auth_login(request, identifyuser)
-            messages.success(request, "Successfully Logged in.")
-            return redirect("/")
+            if identifyuser is not None:
+                auth_login(request, identifyuser)
+                messages.success(request, "Successfully Logged in.")
+                return redirect("/")
 
-        else:
-            messages.error(request, "This account is not register please go and signin.")
-            return redirect("/login")
+            else:
+                messages.error(request, "This account is not register please go and signin.")
+                return redirect("/login")
 
-    return render(request, "maiinn/login.html")
+        return render(request, "maiinn/login.html")
+
+    return HttpResponse("404 - Not Found")
 
 
 def handlelogout(request):
@@ -177,77 +183,86 @@ def Editing(request):
         return HttpResponse("404-Not Found")
 
 def forgotpasss(request):
-    if request.method == 'POST':
-        emmail = request.POST['email']
+    if not request.user.is_authenticated:
+        if request.method == 'POST':
+            emmail = request.POST['email']
 
-        email_list = list(User.objects.values_list("email", flat=True))
-        user_list = list(User.objects.values_list("username", flat=True))
-        print(email_list, user_list)
+            email_list = list(User.objects.values_list("email", flat=True))
+            user_list = list(User.objects.values_list("username", flat=True))
+            print(email_list, user_list)
 
-        codee = random.randint(11111, 99999)
+            codee = random.randint(11111, 99999)
 
-        if emmail in email_list:
-            for i in email_list:
-                if i == emmail:
-                    def send_mail(email, password, message):
-                        server = smtplib.SMTP("smtp.gmail.com", 587)
-                        server.starttls()
-                        server.login(email, password)
-                        server.sendmail(email, i, message)
+            if emmail in email_list:
+                for i in email_list:
+                    if i == emmail:
+                        def send_mail(email, password, message):
+                            server = smtplib.SMTP("smtp.gmail.com", 587)
+                            server.starttls()
+                            server.login(email, password)
+                            server.sendmail(email, i, message)
 
-                    email = "me@gmail.com"
-                    password = "password"
-                    message = f"hello arpit your code - {codee}"
-                    send_mail(email, password, message)
+                        email = "me@gmail.com"
+                        password = "password"
+                        message = f"hello arpit your code - {codee}"
+                        send_mail(email, password, message)
 
-                    messages.success(request, f"code has been send on {i}")
+                        messages.success(request, f"code has been send on {i}")
 
-            # return redirect("/verified")
-            return render(request, "maiinn/verification.html", {'codee':codee})
-        else:
-            messages.error(request, "User not exist")
-            return redirect("/forgotpasss")
-    return render(request, 'maiinn/forgootpasss.html')
+                # return redirect("/verified")
+                return render(request, "maiinn/verification.html", {'codee':codee})
+            else:
+                messages.error(request, "User not exist")
+                return redirect("/forgotpasss")
+        return render(request, 'maiinn/forgootpasss.html')
+
+    return HttpResponse("404 - Not Found")
 
 
 def forgot(request):
-    if request.method == "POST":
-        name = request.POST['name']
-        password = request.POST['password']
-        confirmpass = request.POST['confirm-password']
+    if not request.user.is_authenticated:
+        if request.method == "POST":
+            name = request.POST['name']
+            password = request.POST['password']
+            confirmpass = request.POST['confirm-password']
 
-        user_names = list(User.objects.values_list("username", flat=True))
-        if name not in user_names:
-            messages.error(request, "User not exist")
-            return redirect("/forgot")
+            user_names = list(User.objects.values_list("username", flat=True))
+            if name not in user_names:
+                messages.error(request, "User not exist")
+                return redirect("/forgot")
 
-        if password != confirmpass:
-            messages.error(request, "password and confirm password not matched")
-            return redirect("/forgot")
+            if password != confirmpass:
+                messages.error(request, "password and confirm password not matched")
+                return redirect("/forgot")
 
-        usrr = User.objects.get(username__exact=name)
-        usrr.set_password(password)
-        usrr.save()
+            usrr = User.objects.get(username__exact=name)
+            usrr.set_password(password)
+            usrr.save()
 
-        messages.success(request, "Successfully change password")
-        return redirect("/login")
-    return render(request, "maiinn/forgot.html")
+            messages.success(request, "Successfully change password")
+            return redirect("/login")
+        return render(request, "maiinn/forgot.html")
+
+    return HttpResponse("404 - Not Found")
 
 
 def verified(request):
-    if request.method == "POST":
-        user_code = request.POST['code']
-        user_codee = request.POST['codee']
-        print(user_codee)
+    if not request.user.is_authenticated:
+        if request.method == "POST":
+            user_code = request.POST['code']
+            user_codee = request.POST['codee']
+            print(user_codee)
 
-        if user_code == user_codee:
-            return redirect("/forgot")
+            if user_code == user_codee:
+                return redirect("/forgot")
 
-        else:
-            messages.error(request, "Code is wrong")
-            return redirect("/forgotpass")
+            else:
+                messages.error(request, "Code is wrong")
+                return redirect("/forgotpass")
 
-    return render(request, "maiinn/verification.html")
+        return render(request, "maiinn/verification.html")
+    
+    return HttpResponse("404 - Not Found")
 
 # For testing new things only
 # def sdv(request):

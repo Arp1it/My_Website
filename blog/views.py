@@ -81,3 +81,20 @@ def search(request):
 
         # else:
         #     return HttpResponse("hey")
+
+def Postblog(request):
+    if request.user.is_authenticated:
+        user = request.user
+        blpost = BlogPost.objects.filter(user=user)
+        if request.method == "POST":
+            author = request.POST['auth']
+            mainhead = request.POST['mainh']
+            slug = request.POST['slug']
+            about_author = request.POST['aboutauth']
+            content = request.POST['content']
+
+            post = BlogPost(user=user, author=author, mainhead=mainhead, content=content, slugg=slug, aboutauthor=about_author)
+            post.save()
+            messages.success(request, "Successfully Posted")
+        return render(request, "blog/posting.html", {'posts':blpost})
+    return HttpResponse("404 - Not Found")

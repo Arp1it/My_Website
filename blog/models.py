@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 # Create your models here.
 class BlogPost(models.Model):
     sno = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     author = models.CharField(max_length=20)
     mainhead = models.CharField(max_length=50)
     content = models.TextField(null=False)
