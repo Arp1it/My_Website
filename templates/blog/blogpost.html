@@ -34,14 +34,14 @@
                     {{post.mainhead}}</h1>
             </header>
             <!-- Adding a youtube video -->
-            <div>
+            <!-- <div>
                 <iframe width="600" height="315" src="https://www.youtube.com/embed/YuAya0hRjwU" frameborder="0"
                     allowfullscreen></iframe>
-            </div>
-            <p class="lead mb-5 mt-2">{{post.content}}</p>
-            <figure><img src="https://flowbite.s3.amazonaws.com/typography-plugin/typography-image-1.png" alt="">
+            </div> -->
+            <p class="lead mb-5 mt-2">{{post.content|safe}}</p>
+            <!-- <figure><img src="https://flowbite.s3.amazonaws.com/typography-plugin/typography-image-1.png" alt="">
                 <figcaption>Digital art by Anonymous</figcaption>
-            </figure>
+            </figure> -->
         </article>
     </div>
 </main>

@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, HttpResponse
+from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
 from . models import BlogPost, Blogcomment
 from django.contrib import messages
 # from maiinn.models import userProfile
@@ -91,10 +91,51 @@ def Postblog(request):
             mainhead = request.POST['mainh']
             slug = request.POST['slug']
             about_author = request.POST['aboutauth']
-            content = request.POST['content']
+            content = request.POST.get('content', False)
+            print(content)
+
+            slugy = list(BlogPost.objects.values_list("slugg", flat=True))
+            if slug in slugy:
+                messages.error(request, "Slug is already taken")
+                return redirect("/blog/Postblog")
 
             post = BlogPost(user=user, author=author, mainhead=mainhead, content=content, slugg=slug, aboutauthor=about_author)
             post.save()
             messages.success(request, "Successfully Posted")
         return render(request, "blog/posting.html", {'posts':blpost})
     return HttpResponse("404 - Not Found")
+
+def delet(request):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            sno = request.POST['snodel']
+            cred = get_object_or_404(BlogPost, sno=sno)
+            cred.delete()
+            return redirect("/blog/Postblog")
+
+def editpost(request):
+    if request.user.is_authenticated:
+        if request.method == "GET":
+            snoo = request.GET['snopost']
+            ed = BlogPost.objects.filter(sno=snoo)
+            # print(snoo, ed)
+            return render(request, "blog/editpost.html", {"posts":ed})
+
+def newwpos(request):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            author = request.POST['auth']
+            mainhead = request.POST['mainh']
+            slug = request.POST['slug']
+            about_author = request.POST['aboutauth']
+            content = request.POST.get('content', False)
+
+            user = request.user
+            change = BlogPost.objects.get(user__exact=user)
+            change.author = author
+            change.mainhead = mainhead
+            change.content = content
+            change.slugg = slug
+            change.aboutauthor = about_author
+            change.save()
+            return redirect("/blog/Postblog")

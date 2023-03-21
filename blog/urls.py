@@ -8,5 +8,8 @@ urlpatterns = [
     
     path("", views.bloghome, name="bloghome"),
     path("Postblog", views.Postblog, name="Postblog"),
+    path("delet", views.delet, name="delet"),
+    path("editpost", views.editpost, name="editpost"),
+    path("newwpos", views.newwpos, name="newwpos"),
     path("<str:slug>", views.blogpost, name="blogpost"),
 ]

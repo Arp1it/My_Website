@@ -31,8 +31,7 @@
 
 {% block body %}
 
-
-<form action="Postblog" method="post">{% csrf_token %}
+<form action="newwpos" method="post">{% csrf_token %}
     <section class="text-gray-600 body-font relative">
         <div class="container px-5 py-24 mx-auto">
             <div class="flex flex-col text-center w-full mb-12">
@@ -40,13 +39,14 @@
                 <p class="lg:w-2/3 mx-auto leading-relaxed text-base">Whatever cardigan tote bag tumblr hexagon brooklyn
                     asymmetrical gentrify.</p>
             </div>
+            {% for post in posts %}
             <div class="lg:w-1/2 md:w-2/3 mx-auto">
                 <div class="flex flex-wrap -m-2">
                     <div class="p-2 w-1/2">
                         <div class="relative">
                             <label for="name" class="leading-7 text-sm text-gray-600">Author name</label>
                             <input type="text" id="auth" name="auth"
-                                class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                                class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" value="{{post.author}}"
                                 required>
                         </div>
                     </div>
@@ -54,7 +54,7 @@
                         <div class="relative">
                             <label for="name" class="leading-7 text-sm text-gray-600">Mainhead</label>
                             <input type="text" id="mainh" name="mainh"
-                                class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                                class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" value="{{post.mainhead}}"
                                 required>
                         </div>
                     </div>
@@ -62,7 +62,7 @@
                         <div class="relative">
                             <label for="name" class="leading-7 text-sm text-gray-600">Slug</label>
                             <input type="text" id="slug" name="slug"
-                                class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                                class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" value="{{post.slugg}}"
                                 required>
                         </div>
                     </div>
@@ -70,7 +70,7 @@
                         <div class="relative">
                             <label for="name" class="leading-7 text-sm text-gray-600">About Author</label>
                             <input type="text" id="aboutauth" name="aboutauth"
-                                class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                                class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" value="{{post.aboutauthor}}"
                                 required>
                         </div>
                     </div>
@@ -78,7 +78,7 @@
                     <div class="p-2 w-full">
                         <!-- <h1>TinyMCE Quick Start Guide</h1> -->
                         <!-- <form method="post"> -->
-                        <textarea id="mytextarea" required>Hello, World!</textarea>
+                        <textarea id="mytextarea" required>{{post.content}}</textarea>
                         <!-- </form> -->
                         <!-- <button id="bt">Get HTML</button> -->
                         <input type="hidden" id="myHtml" name="content" value="">
@@ -89,6 +89,7 @@
                                 required></textarea>
                         </div> -->
                     </div>
+                    {% endfor %}
                     <div class="p-2 w-full">
                         <button
                             class="flex mx-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg"
@@ -99,53 +100,6 @@
         </div>
     </section>
 </form>
-
-<hr>
-
-<div class="container px-3 py-3 mx-auto mt-5">
-    <h2 class="text-4xl font-extrabold dark:text-white">Your Posts:</h2>
-
-    {% for post in posts %}
-    <div class="my-1 divide-y-2 divide-gray-100">
-        <div class="py-8 flex flex-wrap md:flex-nowrap">
-            <div class="md:w-64 md:mb-0 mb-6 flex-shrink-0 flex flex-col">
-                <span class="font-semibold title-font text-gray-700">{{post.author}}</span>
-                <span class="mt-1 text-gray-500 text-sm">{{post.time}}</span>
-            </div>
-            <div class="md:flex-grow">
-                <h2 class="text-2xl font-medium text-gray-900 title-font mb-2"><a
-                        href="/blog/{{post.slugg}}">{{post.mainhead}}</a></h2>
-                <p class="leading-relaxed">
-                <div id="preview">{{post.content|safe|truncatechars:500}}</div>
-                </p>
-                <a class="text-indigo-500 inline-flex items-center mt-4">Learn More
-                    <svg class="w-4 h-4 ml-2" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M5 12h14"></path>
-                        <path d="M12 5l7 7-7 7"></path>
-                    </svg>
-                </a>
-            </div>
-        </div>
-        <div>
-            <form action="/blog/delet" method="post">{% csrf_token %}
-                <input type="hidden" value="{{post.sno}}" name="snodel">
-                <button
-                    class="bg-blue-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-r-4 border-red-700 hover:border-red-500 rounded"
-                    type="submit">Delete</button>
-            </form>
-        </div>
-        <div>
-            <form action="/blog/editpost" method="get">{% csrf_token %}
-                <input type="hidden" value="{{post.sno}}" name="snopost">
-                <button
-                    class="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-r-4 border-blue-700 hover:border-blue-500 rounded"
-                    type="submit">Edit</button>
-            </form>
-        </div>
-    </div>
-    {% endfor %}
-</div>
 
 <hr>
 
