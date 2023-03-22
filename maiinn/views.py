@@ -56,17 +56,17 @@ def signin(request):
 
             if len(username) < 3 or len(username) > 15 or len(passs) < 4:
                 messages.error(request, "Please enter username greater than 3 or less than 15 and password is greater than 4")
-                return redirect("/")
+                return redirect("/signin")
 
             user_email_list = list(User.objects.values_list("email", flat=True))
             if email in user_email_list:
                 messages.error(request, "Email address already exist")
-                return redirect("/")
+                return redirect("/signin")
 
             user_list = list(User.objects.values_list("username", flat=True))
             if username in user_list:
                 messages.error(request, "Username already taken")
-                return redirect("/")
+                return redirect("/signin")
 
             person = User.objects.create_user(username, email, passs)
             person.save()

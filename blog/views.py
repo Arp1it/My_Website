@@ -127,8 +127,17 @@ def newwpos(request):
             author = request.POST['auth']
             mainhead = request.POST['mainh']
             slug = request.POST['slug']
+            matchslug = request.POST['matchslug']
+            snoo = request.POST['snoo']
             about_author = request.POST['aboutauth']
             content = request.POST.get('content', False)
+
+            if slug != matchslug:
+                sluggg1 = list(BlogPost.objects.values_list("slugg", flat=True))
+                print(sluggg1)
+                if slug in sluggg1:
+                    messages.error(request, "Slug is already be taken")
+                    return redirect(f"/blog/editpost?snopost={snoo}")
 
             user = request.user
             change = BlogPost.objects.get(user__exact=user)
@@ -138,4 +147,5 @@ def newwpos(request):
             change.slugg = slug
             change.aboutauthor = about_author
             change.save()
+            messages.success(request, "Your Post had been updated.")
             return redirect("/blog/Postblog")
