@@ -11,5 +11,6 @@ urlpatterns = [
     path("delet", views.delet, name="delet"),
     path("editpost", views.editpost, name="editpost"),
     path("newwpos", views.newwpos, name="newwpos"),
+    path("comdel", views.comdel, name="comdel"),
     path("<str:slug>", views.blogpost, name="blogpost"),
 ]

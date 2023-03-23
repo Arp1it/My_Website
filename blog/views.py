@@ -149,3 +149,13 @@ def newwpos(request):
             change.save()
             messages.success(request, "Your Post had been updated.")
             return redirect("/blog/Postblog")
+
+def comdel(request):
+    if request.method == "POST":
+        comsnodel = request.POST['snocomdel']
+        slugggy = request.POST['slugggy']
+        # print(comsnodel, slugggy)
+
+        cred = get_object_or_404(Blogcomment, sno=comsnodel)
+        cred.delete()
+        return redirect(f"/blog/{slugggy}")
