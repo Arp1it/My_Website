@@ -101,7 +101,7 @@ def login(request):
                 return redirect("/")
 
             else:
-                messages.error(request, "This account is not register please go and signin.")
+                messages.error(request, "This account is not register please go and signin or check password again.")
                 return redirect("/login")
 
         return render(request, "maiinn/login.html")
