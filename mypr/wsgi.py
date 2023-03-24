@@ -16,4 +16,4 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mypr.settings')
 application = get_wsgi_application()
 
 ####New
-app = application
+# app = application
