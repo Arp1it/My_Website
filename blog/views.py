@@ -112,14 +112,16 @@ def delet(request):
             cred = get_object_or_404(BlogPost, sno=sno)
             cred.delete()
             return redirect("/blog/Postblog")
+    # return HttpResponse("404 - Not Found")
 
 def editpost(request):
     if request.user.is_authenticated:
-        if request.method == "GET":
-            snoo = request.GET['snopost']
+        if request.method == "POST":
+            snoo = request.POST['snopost']
             ed = BlogPost.objects.filter(sno=snoo)
             # print(snoo, ed)
             return render(request, "blog/editpost.html", {"posts":ed})
+    return HttpResponse("404 - Not Found")
 
 def newwpos(request):
     if request.user.is_authenticated:
@@ -149,6 +151,7 @@ def newwpos(request):
             change.save()
             messages.success(request, "Your Post had been updated.")
             return redirect("/blog/Postblog")
+    return HttpResponse("404 - Not Found")
 
 def comdel(request):
     if request.method == "POST":
@@ -159,3 +162,5 @@ def comdel(request):
         cred = get_object_or_404(Blogcomment, sno=comsnodel)
         cred.delete()
         return redirect(f"/blog/{slugggy}")
+
+    return HttpResponse("404 - Not Found")
