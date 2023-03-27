@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
-from . models import BlogPost, Blogcomment
+from . models import BlogPost, Blogcomment, BlogLike
 from django.contrib import messages
 # from maiinn.models import userProfile
 # from maiinn.forms import ImageForm
@@ -15,7 +15,7 @@ def bloghome(request):
 def blogpost(request, slug):
     blposts = BlogPost.objects.filter(slugg=slug).first()
 
-
+    blogl = len(BlogLike.objects.filter(assspost=blposts))
 
     comments = Blogcomment.objects.filter(post=blposts, parent=None)
 
@@ -32,7 +32,7 @@ def blogpost(request, slug):
         else:
             repldit[reply.parent.sno].append(reply)
 
-    contextt = {"post":blposts, "comments":comments, "replydict":repldit, "com":com}
+    contextt = {"post":blposts, "comments":comments, "replydict":repldit, "com":com, "likes":blogl}
     return render(request, "blog/blogpost.html", contextt)
 
 # API
@@ -164,3 +164,39 @@ def comdel(request):
         return redirect(f"/blog/{slugggy}")
 
     return HttpResponse("404 - Not Found")
+
+def bloglike(request):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            user = request.user
+            postlikesno = request.POST['Postlikesno']
+            post = BlogPost.objects.get(sno=postlikesno)
+            sl = request.POST['likesl']
+
+            l = set()
+
+            students = BlogLike.objects.select_related('user')
+            for stud in students:
+                l.add(stud.user.username)
+
+            print(list(l))
+
+            asspos = list(BlogLike.objects.values_list("assspost", flat=True))
+            print(asspos, user)
+            print(postlikesno)
+            print(str(user)in l)
+            print(int(postlikesno) in asspos)
+
+            if str(user) in l and int(postlikesno) in asspos:
+                creed = get_object_or_404(BlogLike, user=user, assspost=postlikesno)
+                print(creed)
+                creed.delete()
+                return redirect(f"/blog/{sl}")
+
+            li = BlogLike(user=user, assspost=post)
+            li.save()
+            return redirect(f"/blog/{sl}")
+    
+    else:
+        messages.error(request, "Please go and signin")
+        return redirect("signin")

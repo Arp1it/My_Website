@@ -26,3 +26,12 @@ class Blogcomment(models.Model):
 
     def __str__(self):
         return f"{self.comment[0:5]}... by {self.user.username}"
+
+
+class BlogLike(models.Model):
+    sno = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    assspost = models.ForeignKey(BlogPost, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Liked by {self.user.username}"
