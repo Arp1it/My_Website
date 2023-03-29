@@ -35,3 +35,12 @@ class BlogLike(models.Model):
 
     def __str__(self):
         return f"Liked by {self.user.username}"
+
+
+class BlogViews(models.Model):
+    sno = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    asss = models.ForeignKey(BlogPost, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Viewed by {self.user.username}"

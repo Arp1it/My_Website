@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
-from . models import BlogPost, Blogcomment, BlogLike
+from . models import BlogPost, Blogcomment, BlogLike, BlogViews
 from django.contrib import messages
 # from maiinn.models import userProfile
 # from maiinn.forms import ImageForm
@@ -14,6 +14,32 @@ def bloghome(request):
 
 def blogpost(request, slug):
     blposts = BlogPost.objects.filter(slugg=slug).first()
+
+    print(f"{blposts.author} - {blposts.mainhead}")
+
+    if request.user.is_authenticated:
+        user = request.user
+
+        btlv = BlogViews.objects.filter(user=user, asss=blposts).first()
+        # print(btlv == None)
+        # print(btlv)
+        # # print(btlv.user)
+        # print((str(btlv.asss)))
+        # print(blposts)
+        # print(str(btlv.asss) != str(blposts))
+        h = blposts.sno
+        hhv = BlogPost.objects.get(sno=h)
+        # print(hhv)
+
+        if btlv != None:
+            if btlv.asss != blposts: 
+                ssv = BlogViews(user=user, asss=hhv)
+                ssv.save()
+        if btlv == None:
+            ssv = BlogViews(user=user, asss=hhv)
+            ssv.save()
+
+    blvi = len(BlogViews.objects.filter(asss=blposts))
 
     blogl = len(BlogLike.objects.filter(assspost=blposts))
 
@@ -32,7 +58,7 @@ def blogpost(request, slug):
         else:
             repldit[reply.parent.sno].append(reply)
 
-    contextt = {"post":blposts, "comments":comments, "replydict":repldit, "com":com, "likes":blogl}
+    contextt = {"post":blposts, "comments":comments, "replydict":repldit, "com":com, "likes":blogl, "view":blvi}
     return render(request, "blog/blogpost.html", contextt)
 
 # API
