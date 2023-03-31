@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure-%s(_b2hx)yx3w5@&3c-cde2wjc-*90+ecl#buj(mfqs%72u@)f
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 #####
 # ALLOWED_HOSTS = ['.vercel.app']
 
@@ -42,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'django_social_share',
 ]
 
 MIDDLEWARE = [
