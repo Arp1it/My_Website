@@ -1,5 +1,9 @@
 {% extends 'maiinn/mains.html' %}
 
+{% block title %}
+  Signin
+{% endblock %}
+
 {% block body %}
 
 <form action="/signin" method="post">{% csrf_token %}

@@ -1,5 +1,9 @@
 {% extends 'maiinn/mains.html' %}
 
+{% block title %}
+  Contact
+{% endblock %}
+
 {% block body %}
 
 <form action="/contact" method="post">{% csrf_token %}
