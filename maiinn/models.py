@@ -19,3 +19,10 @@ class userProfile(models.Model):
 
     def __str__(self):
         return str(self.user)
+
+class Codddeee(models.Model):
+    code = models.IntegerField()
+    gmmaail = models.CharField(max_length=50)
+
+    def __str__(self):
+        return gmmaail

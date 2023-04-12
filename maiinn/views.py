@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.contrib import messages
-from . models import Contact, userProfile
+from . models import Contact, userProfile, Codddeee
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, logout
 from django.contrib.auth import login as auth_login
@@ -102,7 +102,7 @@ def login(request):
 
             else:
                 messages.error(request, "This account is not register please go and signin or check password again.")
-                return redirect("/login")
+                return redirect("/loin")
 
         return render(request, "maiinn/login.html")
 
@@ -191,7 +191,12 @@ def forgotpasss(request):
             user_list = list(User.objects.values_list("username", flat=True))
             print(email_list, user_list)
 
+            oldcod = Codddeee.objects.filter(gmmaail=emmail)
+            oldcod.delete()
+
             codee = random.randint(11111, 99999)
+
+            Codddeee.objects.create(code = codee, gmmaail=emmail)
 
             if emmail in email_list:
                 for i in email_list:
@@ -203,14 +208,14 @@ def forgotpasss(request):
                             server.sendmail(email, i, message)
 
                         email = "me@gmail.com"
-                        password = "password"
+                        password = "yourpassword"
                         message = f"hello arpit your code - {codee}"
                         send_mail(email, password, message)
 
                         messages.success(request, f"code has been send on {i}")
 
                 # return redirect("/verified")
-                return render(request, "maiinn/verification.html", {'codee':codee})
+                return render(request, "maiinn/verification.html", {"emmail":emmail})
             else:
                 messages.error(request, "User not exist")
                 return redirect("/forgotpasss")
@@ -222,12 +227,18 @@ def forgotpasss(request):
 def forgot(request):
     if not request.user.is_authenticated:
         if request.method == "POST":
-            name = request.POST['name']
+            emaail = request.POST['emmail']
+            # name = request.POST['name']
             password = request.POST['password']
             confirmpass = request.POST['confirm-password']
 
-            user_names = list(User.objects.values_list("username", flat=True))
-            if name not in user_names:
+            if len(emaail) < 12:
+                messages.error(request, "First verify you !!!")
+                return redirect("/forgotpasss")
+
+            email_lii = list(User.objects.values_list("email", flat=True))
+            # user_names = list(User.objects.values_list("username", flat=True))
+            if emaail not in email_lii:
                 messages.error(request, "User not exist")
                 return redirect("/forgot")
 
@@ -235,12 +246,13 @@ def forgot(request):
                 messages.error(request, "password and confirm password not matched")
                 return redirect("/forgot")
 
-            usrr = User.objects.get(username__exact=name)
+            usrr = User.objects.get(email__exact=emaail)
             usrr.set_password(password)
             usrr.save()
 
             messages.success(request, "Successfully change password")
-            return redirect("/login")
+            return redirect("/loin")
+
         return render(request, "maiinn/forgot.html")
 
     return HttpResponse("404 - Not Found")
@@ -250,15 +262,23 @@ def verified(request):
     if not request.user.is_authenticated:
         if request.method == "POST":
             user_code = request.POST['code']
-            user_codee = request.POST['codee']
-            print(user_codee)
+            user_email = request.POST['emmail']
+            
+            co = Codddeee.objects.filter(gmmaail=user_email).first()
+            ussser_code = co.code
+            print(ussser_code)
+            # print(type(ussser_code), type(user_code))
 
-            if user_code == user_codee:
-                return redirect("/forgot")
+            if user_code == str(ussser_code):
+                usedcod = Codddeee.objects.filter(gmmaail=user_email)
+                usedcod.delete()
+                return render(request, "maiinn/forgot.html", {"emmail":user_email})
 
             else:
                 messages.error(request, "Code is wrong")
-                return redirect("/forgotpass")
+                oldcod = Codddeee.objects.filter(gmmaail=emmail)
+                oldcod.delete()
+                return redirect("/forgotpasss")
 
         return render(request, "maiinn/verification.html")
     
