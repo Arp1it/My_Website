@@ -6,7 +6,7 @@ from django.contrib import messages
 
 # Create your views here.
 def bloghome(request):
-    posts = BlogPost.objects.all()
+    posts = BlogPost.objects.order_by('-views', '-time')
 
     # print(posts)
     context = {"posts":posts}
@@ -35,9 +35,17 @@ def blogpost(request, slug):
             if btlv.asss != blposts: 
                 ssv = BlogViews(user=user, asss=hhv)
                 ssv.save()
+                blvi = len(BlogViews.objects.filter(asss=blposts))
+                v = BlogPost.objects.get(slugg__exact=slug)
+                v.views = int(blvi)
+                v.save()
         if btlv == None:
             ssv = BlogViews(user=user, asss=hhv)
             ssv.save()
+            blvi = len(BlogViews.objects.filter(asss=blposts))
+            v = BlogPost.objects.get(slugg__exact=slug)
+            v.views = int(blvi)
+            v.save()
 
     blvi = len(BlogViews.objects.filter(asss=blposts))
 

@@ -11,6 +11,7 @@ class BlogPost(models.Model):
     content = models.TextField(null=False)
     slugg = models.CharField(max_length=100)
     aboutauthor = models.CharField(max_length=50)
+    views = models.IntegerField(default=1)
     time = models.DateTimeField(default=now)
 
     def __str__(self):
